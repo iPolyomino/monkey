@@ -53,7 +53,6 @@ type LetStatement struct {
 
 func (ls *LetStatement) statementNode()       {}
 func (ls *LetStatement) TokenLiteral() string { return ls.Token.Literal }
-
 func (ls *LetStatement) String() string {
 	var out bytes.Buffer
 
@@ -70,15 +69,6 @@ func (ls *LetStatement) String() string {
 	return out.String()
 }
 
-type Identifier struct {
-	Token token.Token // token.IDENT トークン
-	Value string
-}
-
-func (i *Identifier) expressionNode()      {}
-func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
-func (i *Identifier) String() string       { return i.Value }
-
 type ReturnStatement struct {
 	Token       token.Token // 'return' トークン
 	ReturnValue Expression
@@ -86,7 +76,6 @@ type ReturnStatement struct {
 
 func (rs *ReturnStatement) statementNode()       {}
 func (rs *ReturnStatement) TokenLiteral() string { return rs.Token.Literal }
-
 func (rs *ReturnStatement) String() string {
 	var out bytes.Buffer
 
@@ -108,13 +97,48 @@ type ExpressionStatement struct {
 
 func (es *ExpressionStatement) statementNode()       {}
 func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
-
 func (es *ExpressionStatement) String() string {
 	if es.Expression != nil {
 		return es.Expression.String()
 	}
 	return ""
 }
+
+type BlockStatement struct {
+	Token      token.Token // { トークン
+	Statements []Statement
+}
+
+func (bs *BlockStatement) statementNode()       {}
+func (bs *BlockStatement) TokenLiteral() string { return bs.Token.Literal }
+func (bs *BlockStatement) String() string {
+	var out bytes.Buffer
+
+	for _, s := range bs.Statements {
+		out.WriteString(s.String())
+	}
+
+	return out.String()
+}
+
+// Expressions
+type Identifier struct {
+	Token token.Token // token.IDENT トークン
+	Value string
+}
+
+func (i *Identifier) expressionNode()      {}
+func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
+func (i *Identifier) String() string       { return i.Value }
+
+type Boolean struct {
+	Token token.Token
+	Value bool
+}
+
+func (b *Boolean) expressionNode()      {}
+func (b *Boolean) TokenLiteral() string { return b.Token.Literal }
+func (b *Boolean) String() string       { return b.Token.Literal }
 
 type IntegerLiteral struct {
 	Token token.Token
@@ -165,15 +189,6 @@ func (oe *InfixExpression) String() string {
 	return out.String()
 }
 
-type Boolean struct {
-	Token token.Token
-	Value bool
-}
-
-func (b *Boolean) expressionNode()      {}
-func (b *Boolean) TokenLiteral() string { return b.Token.Literal }
-func (b *Boolean) String() string       { return b.Token.Literal }
-
 type IfExpression struct {
 	Token       token.Token
 	Condition   Expression
@@ -194,23 +209,6 @@ func (ie *IfExpression) String() string {
 	if ie.Alternative != nil {
 		out.WriteString("else ")
 		out.WriteString(ie.Alternative.String())
-	}
-
-	return out.String()
-}
-
-type BlockStatement struct {
-	Token      token.Token // { トークン
-	Statements []Statement
-}
-
-func (bs *BlockStatement) statementNode()       {}
-func (bs *BlockStatement) TokenLiteral() string { return bs.Token.Literal }
-func (bs *BlockStatement) String() string {
-	var out bytes.Buffer
-
-	for _, s := range bs.Statements {
-		out.WriteString(s.String())
 	}
 
 	return out.String()
