@@ -45,6 +45,7 @@ func (p *Program) String() string {
 	return out.String()
 }
 
+// Statements
 type LetStatement struct {
 	Token token.Token // token.LET トークン
 	Name  *Identifier
